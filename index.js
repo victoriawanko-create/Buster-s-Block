@@ -1,5 +1,11 @@
+const apiKey = "95e3e9cb";
+
+fetch(`http://www.omdbapi.com/?t=${movieTitle}&apikey=${apiKey}`)
+  .then(response => response.json())
+  .then(data => console.log(data))
+
 async function main() {
-    const movieData = await fetch(`https://www.omdbapi.com/?i=tt3896198&apikey=${95e3e9cb}`);
+    const movieData = await fetch(`https://www.omdbapi.com/?i=tt3896198&apikey=95e3e9cb`);
     const moviesData = await movieData.json();
     const movieListEl = document.querySelector(".movie-list");
 
@@ -9,36 +15,41 @@ async function main() {
 main();
 
 let movies;
-
-async function renderMovies(filter) {
-    const moviesWrapper = document.querySelector('.movies');
    
-    moviesWrapper.classList.add('movies__loading')
+async function renderMovies(searchTerm = "batman") {
+    const moviesWrapper = document.querySelector(".movies");
 
-    if (!movies) {
-      movies = await getMovies();
-    }
-    
-    let filteredMovies = [...movies];
+  moviesWrapper.classList.add("movies__loading");
 
-    if (filter === 'A_TO_Z') {
-        filteredMovies.sort((a, b) => (a.salePrice || a.originalPrice) - (b.salePrice || b.originalPrice));
-    }
-    else if (filter === 'Z_TO_A') {
-      filteredMovies.sort((a, b) => (b.originalPrice || b.originalPrice) - (a.salePrice || a.originalPrice));
-    }
-    else if (filter === 'NEW_TO_OLD') {
-      filteredMovies.sort((a, b) => b.rating - a.rating);
-    }
-    else if (filter === 'OLD_TO_NEW') {
-      filteredMovies.sort((a, b) => a.rating - b.rating);
-    }
+  const response = await fetch(
+    `https://www.omdbapi.com/?s=${searchTerm}&apikey=95e3e9cb`
+  );
 
-    const moviesHTML = filteredMovies.map((movie) => {
+  const data = await response.json();
+
+  moviesWrapper.classList.remove("movies__loading");
+
+  if (!data.Search) {
+    moviesWrapper.innerHTML = "<p>No movies found.</p>";
+    return;
+  }
+
+  moviesWrapper.innerHTML = data.Search.map((movie) => {
     return `
-    `
-})
-.join("");
+      <div class="movie">
+        <img src="${movie.Poster}" alt="${movie.Title}" class="movie__img" />
+        <h3>${movie.Title}</h3>
+        <p>${movie.Year}</p>
+      </div>
+    `;
+  }).join("");
+}
+
+renderMovies();
+
+function filterMovies(event) {
+  console.log(event.target.value);
+}
 
 moviesWrapper.classList.remove('movies__loading');
 moviesWrapper.innerHTML = moviesHTML;
