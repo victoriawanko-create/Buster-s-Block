@@ -25,11 +25,35 @@ async function renderMovies(searchTerm = "batman") {
     `https://www.omdbapi.com/?s=${searchTerm}&apikey=95e3e9cb`
   );
 
-  const data = await response.json();
+  const movies = await response.json();
+
+        const sortedMovies = movies.sort((a, b) => {
+            if (a.title < b.title) return -1; 
+            if (a.title > b.title) return 1;  
+            return 0;
+          });
+
+           displayMovies(sortedMovies);
+    } catch (error) {
+        console.error('Error fetching movies:', error);
+    }
+
+function displayMovies(movies) {
+    const movieList = document.getElementById('movie-list'); // Make sure to have this element in your HTML
+    movieList.innerHTML = ''; // Clear previous content
+
+    movies.forEach(movie => {
+        const listItem = document.createElement('li');
+        listItem.textContent = movie.title; // Assuming each movie object has a title property
+        movieList.appendChild(listItem);
+    });
+}
+
+fetchAndFilterMovies();
 
   moviesWrapper.classList.remove("movies__loading");
 
-  if (!data.Search) {
+  if (!movies.Search) {
     moviesWrapper.innerHTML = "<p>No movies found.</p>";
     return;
   }
@@ -43,7 +67,6 @@ async function renderMovies(searchTerm = "batman") {
       </div>
     `;
   }).join("");
-}
 
 renderMovies();
 
@@ -53,7 +76,6 @@ function filterMovies(event) {
 
 moviesWrapper.classList.remove('movies__loading');
 moviesWrapper.innerHTML = moviesHTML;
-}
 
 
 setTimeout(() => {
