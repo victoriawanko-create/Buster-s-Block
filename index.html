@@ -113,6 +113,7 @@
           <h2 class="section__title movies__header--title">
             All <span class="blue">Movies</span>
           </h2>
+          <div id="movie-list">
           <select id="filter" onchange="filterMovies(event)">
             <option value="" disabled selected>Sort</option>
             <option value="A_TO_Z">Alphabetical A to Z</option>
@@ -120,6 +121,7 @@
             <option value="NEW_TO_OLD">Newest to oldest</option>  
             <option value="OLD_TO_NEW">Oldest to newest</option>  
           </select>
+          </div>
         </div>
           <div class="movies">
             <i class="fas fa-spinner movies__loading--spinner"></i>

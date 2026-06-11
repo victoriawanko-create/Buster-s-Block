@@ -17,48 +17,40 @@ main();
 let movies;
    
 async function renderMovies(searchTerm = "batman") {
-    const moviesWrapper = document.querySelector(".movies");
+  const moviesWrapper = document.querySelector(".movies");
 
   moviesWrapper.classList.add("movies__loading");
 
-  const response = await fetch(
-    `https://www.omdbapi.com/?s=${searchTerm}&apikey=95e3e9cb`
-  );
+  try {
+    const response = await fetch(
+      `https://www.omdbapi.com/?s=${searchTerm}&apikey=95e3e9cb`
+    );
 
-  const movies = await response.json();
+    const data = await response.json();
 
-        const sortedMovies = movies.sort((a, b) => {
-            if (a.title < b.title) return -1; 
-            if (a.title > b.title) return 1;  
-            return 0;
-          });
+    moviesWrapper.classList.remove("movies__loading");
 
-           displayMovies(sortedMovies);
-    } catch (error) {
-        console.error('Error fetching movies:', error);
+    if (!data.Search) {
+      moviesWrapper.innerHTML = "<p>No movies found.</p>";
+      return;
     }
 
-function displayMovies(movies) {
-    const movieList = document.getElementById('movie-list'); // Make sure to have this element in your HTML
-    movieList.innerHTML = ''; // Clear previous content
-
-    movies.forEach(movie => {
-        const listItem = document.createElement('li');
-        listItem.textContent = movie.title; // Assuming each movie object has a title property
-        movieList.appendChild(listItem);
+    const sortedMovies = data.Search.sort((a, b) => {
+      if (a.Title < b.Title) return -1;
+      if (a.Title > b.Title) return 1;
+      return 0;
     });
-}
 
-fetchAndFilterMovies();
-
-  moviesWrapper.classList.remove("movies__loading");
-
-  if (!movies.Search) {
-    moviesWrapper.innerHTML = "<p>No movies found.</p>";
-    return;
+    displayMovies(sortedMovies);
+  } catch (error) {
+    moviesWrapper.classList.remove("movies__loading");
+    console.error("Error fetching movies:", error);
   }
 
-  moviesWrapper.innerHTML = data.Search.map((movie) => {
+ function displayMovies(movies) {
+  const movieList = document.getElementById("movie-list");
+
+  movieList.innerHTML = movies.map((movie) => {
     return `
       <div class="movie">
         <img src="${movie.Poster}" alt="${movie.Title}" class="movie__img" />
@@ -67,12 +59,11 @@ fetchAndFilterMovies();
       </div>
     `;
   }).join("");
+}
+
+}
 
 renderMovies();
-
-function filterMovies(event) {
-  console.log(event.target.value);
-}
 
 moviesWrapper.classList.remove('movies__loading');
 moviesWrapper.innerHTML = moviesHTML;
