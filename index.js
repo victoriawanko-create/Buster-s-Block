@@ -14,8 +14,8 @@ async function main() {
 
 main();
 
-let movies;
-   
+let movies = [];
+
 async function renderMovies(searchTerm = "batman") {
   const moviesWrapper = document.querySelector(".movies");
 
@@ -35,45 +35,51 @@ async function renderMovies(searchTerm = "batman") {
       return;
     }
 
-    const sortedMovies = data.Search.sort((a, b) => {
-      if (a.Title < b.Title) return -1;
-      if (a.Title > b.Title) return 1;
-      return 0;
-    });
-
-    displayMovies(sortedMovies);
+    movies = data.Search;
+    displayMovies(movies);
   } catch (error) {
     moviesWrapper.classList.remove("movies__loading");
     console.error("Error fetching movies:", error);
   }
-
- function displayMovies(movies) {
-  const movieList = document.getElementById("movie-list");
-
-  movieList.innerHTML = movies.map((movie) => {
-    return `
-      <div class="movie">
-        <img src="${movie.Poster}" alt="${movie.Title}" class="movie__img" />
-        <h3>${movie.Title}</h3>
-        <p>${movie.Year}</p>
-      </div>
-    `;
-  }).join("");
 }
 
+function displayMovies(movies) {
+  const moviesWrapper = document.querySelector(".movies");
+
+  moviesWrapper.innerHTML = movies
+    .map((movie) => {
+      return `
+        <div class="movie">
+          <img src="${movie.Poster}" alt="${movie.Title}" class="movie__img" />
+          <h3>${movie.Title}</h3>
+          <p>${movie.Year}</p>
+        </div>
+      `;
+    })
+    .join("");
+}
+
+function filterMovies(event) {
+  const filter = event.target.value;
+  let sortedMovies = [...movies];
+
+  if (filter === "A_TO_Z") {
+    sortedMovies.sort((a, b) => a.Title.localeCompare(b.Title));
+  }
+
+  if (filter === "Z_TO_A") {
+    sortedMovies.sort((a, b) => b.Title.localeCompare(a.Title));
+  }
+
+  if (filter === "NEW_TO_OLD") {
+    sortedMovies.sort((a, b) => parseInt(b.Year) - parseInt(a.Year));
+  }
+
+  if (filter === "OLD_TO_NEW") {
+    sortedMovies.sort((a, b) => parseInt(a.Year) - parseInt(b.Year));
+  }
+
+  displayMovies(sortedMovies);
 }
 
 renderMovies();
-
-moviesWrapper.classList.remove('movies__loading');
-moviesWrapper.innerHTML = moviesHTML;
-
-
-setTimeout(() => {
-  renderMovies();
-});
-
-
-function filterMovies(event) {
-  renderMovies(event.target.value);
-}
