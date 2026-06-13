@@ -1,3 +1,5 @@
+let movieTitle = "Inception";
+
 const apiKey = "95e3e9cb";
 
 fetch(`http://www.omdbapi.com/?t=${movieTitle}&apikey=${apiKey}`)
