@@ -61,6 +61,16 @@ function displayMovies(movies) {
     .join("");
 }
 
+const searchInput = document.getElementById("search");
+function searchMovies () {
+  const searchTerm = searchInput.value.trim();
+  if (searchTerm) {
+    renderMovies(searchTerm);
+  } else {
+    renderMovies();
+  }
+}
+
 function filterMovies(event) {
   const filter = event.target.value;
   let sortedMovies = [...movies];

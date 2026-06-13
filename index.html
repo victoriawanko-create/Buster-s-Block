@@ -114,6 +114,13 @@
             All <span class="blue">Movies</span>
           </h2>
 
+          <div class="search-container">
+                <input type="text" id="search" placeholder="Search for a movie...">
+                <button id="search-btn" onclick="searchMovies()">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+
           
           <select id="filter" onchange="filterMovies(event)">
             <option value="" disabled selected>Sort</option>
